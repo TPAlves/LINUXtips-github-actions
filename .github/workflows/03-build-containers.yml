@@ -40,19 +40,14 @@ jobs:
           echo "IMAGE_NAME_FORMAT=$IMAGE_NAME_FORMAT" >> $GITHUB_OUTPUT
 
       - name: "Trivy Scan"
-        uses: aquasecurity/trivy-action@0.31.0
+        uses: aquasecurity/trivy-action@master
         id: trivy-scan
-        run: |
-          ~/.local/bin/trivy-bin/trivy image \
-            --format table \
-            --severity CRITICAL,HIGH \
-            --output trivy-report.txt \
-            ${{ steps.build.outputs.IMAGE_NAME_FORMAT }} || true
-          if grep -q "CRITICAL" trivy-report.txt; then
-            echo "::error Vulnerabilidades CRÍTICAS encontradas no scan de segurança"
-            exit 1
-            echo exit-code=1 >> $GITHUB_OUTPUT
-          fi
+        with:
+          scan-type: "image"
+          image-ref: ${{ steps.build.outputs.IMAGE_NAME_FORMAT }}
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
         continue-on-error: true
 
       - name: "Upload do relatório de vulnerabilidades"
