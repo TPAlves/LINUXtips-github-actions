@@ -34,7 +34,7 @@ jobs:
             exit 1
           fi
           echo "Construindo imagem docker..."
-          docker build -t $REGISTRY/${{ github.repository }}:${{ GITHUB_RUN_ID }} .
+          docker build -t $REGISTRY/${{ github.repository }}:${{ env.GITHUB_RUN_ID }} .
 
       - name: "Trivy Scan"
         uses: aquasecurity/setup-trivy@latest
