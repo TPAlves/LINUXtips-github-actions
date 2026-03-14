@@ -40,7 +40,7 @@ jobs:
         uses: aquasecurity/setup-trivy@latest
         with:
           scan-type: "image"
-          image-ref: $REGISTRY/${{ github.repository }}:${{ GITHUB_RUN_ID }}
+          image-ref: $REGISTRY/${{ github.repository }}:${{ env.GITHUB_RUN_ID }}
           format: "table"
           severity: "CRITICAL,HIGH"
           exit-code: "1"
@@ -51,7 +51,7 @@ jobs:
           echo "Fazendo login no GHCR..."
           echo ${{ secrets.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           echo "Publicando imagem no GHCR..."
-          docker push $REGISTRY/${{ github.repository }}:${{ GITHUB_RUN_ID }}
+          docker push $REGISTRY/${{ github.repository }}:${{ env.GITHUB_RUN_ID }}
 
   generate-certificate: # DAQUI PARA BAIXO, NÃO ALTERAR
     name: "Desafio Nível 3 - Certificado"
