@@ -37,7 +37,7 @@ jobs:
           docker build -t $REGISTRY/${{ github.repository }}:${{ env.GITHUB_RUN_ID }} .
 
       - name: "Trivy Scan"
-        uses: aquasecurity/setup-trivy@latest
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: "image"
           image-ref: $REGISTRY/${{ github.repository }}:${{ env.GITHUB_RUN_ID }}
