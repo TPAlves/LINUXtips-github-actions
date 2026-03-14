@@ -3,7 +3,7 @@ name: "Nível 3: Containers e Segurança"
 on:
   pull_request:
     types: [closed]
-    branches: [ desafio-nivel-3 ]
+    branches: [desafio-nivel-3]
 
 permissions:
   contents: read
@@ -17,11 +17,38 @@ env:
 jobs:
   build-scan-and-push:
     name: "Build, Lint, Trivy Scan e Push no GHCR"
-    if: #????
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
-      # AQUI VAI O CÓDIGO DO DESAFIO :)
+      - name: "Checkout do código"
+        uses: actions/checkout@v4
+
+      - name: "Build"
+        run: |
+          if [ ! -f Dockerfile ]; then
+            echo "::error Dockerfile não encontrado"
+            exit 1
+          fi
+          echo "Construindo imagem docker..."
+          docker build -t $REGISTRY/${{ GITHUB_REPOSITORY }}:${{ GITHUB_RUN_ID }} .
+
+      - name: "Trivy Scan"
+        uses: aquasecurity/setup-trivy@latest
+        with:
+          scan-type: "image"
+          image-ref: $REGISTRY/${{ GITHUB_REPOSITORY }}:${{ GITHUB_RUN_ID }}
+          format: "table"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+
+      - name: "Push para GHCR"
+        if: success() && steps.trivy-scan.outputs.exit-code == '0'
+        run: |
+          echo "Fazendo login no GHCR..."
+          echo ${{ secrets.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "Publicando imagem no GHCR..."
+          docker push $REGISTRY/${{ GITHUB_REPOSITORY }}:${{ GITHUB_RUN_ID }}
 
   generate-certificate: # DAQUI PARA BAIXO, NÃO ALTERAR
     name: "Desafio Nível 3 - Certificado"
