@@ -35,6 +35,13 @@ jobs:
             exit 1
           fi
           echo "Construindo imagem docker..."
+          echo ${{ env.GITHUB_RUN_ID }}
+          echo ${{ GITHUB_RUN_ID }}
+          echo $GITHUB_RUN_ID
+          echo Todas as envs predefinidas do github:
+          env 
+
+
           docker build -t $REGISTRY/${{ github.repository }}:${{ env.GITHUB_RUN_ID }} .
 
       - name: "Trivy Scan"
