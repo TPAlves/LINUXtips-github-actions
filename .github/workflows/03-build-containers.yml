@@ -16,6 +16,7 @@ env:
   CHALLENGE_LEVEL: 3
   CHALLENGE_NAME: "containers-e-seguranca"
   REGISTRY: ghcr.io
+  GITHUB_RUN_ID: ${{ github.run_id }}
 
 jobs:
   build-scan-and-push:
