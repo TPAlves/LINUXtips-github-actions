@@ -37,13 +37,13 @@ jobs:
           IMAGE_NAME_FORMAT=$(echo ${{ env.IMAGE_NAME }} | tr '[:upper:]' '[:lower:]')
           echo "Building Docker image with tag: $IMAGE_NAME_FORMAT"
           docker build -t $IMAGE_NAME_FORMAT .
-          echo "IMAGE_NAME=$IMAGE_NAME_FORMAT" >> $GITHUB_OUTPUT
+          echo "IMAGE_NAME_FORMAT=$IMAGE_NAME_FORMAT" >> $GITHUB_OUTPUT
 
       - name: "Trivy Scan"
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: "image"
-          image-ref: ${{ steps.build.outputs.IMAGE_NAME }}
+          image-ref: ${{ steps.build.outputs.IMAGE_NAME_FORMAT }}
           format: "table"
           severity: "CRITICAL,HIGH"
           exit-code: "1"
@@ -54,7 +54,7 @@ jobs:
           echo "Fazendo login no GHCR..."
           echo ${{ secrets.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           echo "Publicando imagem no GHCR..."
-          docker push ${{ steps.build.outputs.IMAGE_NAME }}
+          docker push ${{ steps.build.outputs.IMAGE_NAME_FORMAT }}
 
   generate-certificate: # DAQUI PARA BAIXO, NÃO ALTERAR
     name: "Desafio Nível 3 - Certificado"
