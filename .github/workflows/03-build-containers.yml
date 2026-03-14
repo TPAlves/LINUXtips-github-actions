@@ -15,8 +15,7 @@ permissions:
 env:
   CHALLENGE_LEVEL: 3
   CHALLENGE_NAME: "containers-e-seguranca"
-  REGISTRY: ghcr.io
-  IMAGE_NAME: $REGISTRY/${{ github.repository }}:${{ github.run_id }}
+  IMAGE_NAME: ghcr.io/${{ github.repository }}:${{ github.run_id }}
 
 jobs:
   build-scan-and-push:
@@ -38,7 +37,7 @@ jobs:
           IMAGE_NAME=${{ env.IMAGE_NAME }} | tr '[:upper:]' '[:lower:]'
           docker build -t $IMAGE_NAME .
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
-        
+
       - name: "Trivy Scan"
         uses: aquasecurity/trivy-action@0.33.1
         with:
